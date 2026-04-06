@@ -171,11 +171,7 @@ def gen_struct(code_gen: Backend, yaml_data: dict):
         doc_str = generate_doc_string(
             field, code_gen.__class__.__name__, is_enum
         )
-        # TODO: Integrity enum is currently undefined and just a placeholder. So here we'll just use
-        # an int for now.
-        if ftype is None and fname == 'integrity_method':
-            ftype = 'uint8'
-        if ftype is None and is_enum and len(enum_fields) > 0:
+        if ftype is None and is_enum:
             process_enum(code_gen, fname, enum_fields, doc_str)
         else:
             process_struct_field(code_gen, ftype, fname, doc_str)
