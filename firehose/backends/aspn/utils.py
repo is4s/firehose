@@ -9,20 +9,16 @@ ASPN_NULLABILITY_MACRO_START = 'ASPN_ASSUME_NONNULL_BEGIN'
 ASPN_NULLABILITY_MACRO_END = 'ASPN_ASSUME_NONNULL_END'
 ASPN_NULLABLE_MACRO = 'ASPN_NULLABLE'
 ASPN_DISABLE_NULLABILITY = 'ASPN_DISABLE_NULLABILITY'
-C_MULTILINE_TEMPLATE = dedent(
-    '''
+C_MULTILINE_TEMPLATE = dedent('''
     {indent}/**
     {indent} * {docstr}
     {indent} */
-    '''
-)
-PY_MULTILINE_TEMPLATE = dedent(
-    '''
+    ''')
+PY_MULTILINE_TEMPLATE = dedent('''
     {indent}"""
     {indent}{docstr}
     {indent}"""
-    '''
-)
+    ''')
 PREFIX_MAP = {'//': '// ', '#': '# ', '/**': ' * ', '"""': ''}
 INDENT = 4 * " "
 
@@ -305,9 +301,7 @@ def snake_to_pascal(snake_string: str) -> str:
 
 
 def clang_format_file_contents(file_content, output_path):
-    CLANG_FORMAT = (
-        dedent(
-            """
+    CLANG_FORMAT = dedent("""
     {AccessModifierOffset: -4,
     AlignConsecutiveAssignments: true,
     AlignTrailingComments: true,
@@ -330,11 +324,7 @@ def clang_format_file_contents(file_content, output_path):
     SortIncludes: false,
     TabWidth: 4,
     UseTab: ForIndentation}
-    """
-        )
-        .strip()
-        .replace(",\n", ", ")
-    )
+    """).strip().replace(",\n", ", ")
     with open(output_path, "a", encoding="utf-8") as f:
         f.write(file_content)
     try:

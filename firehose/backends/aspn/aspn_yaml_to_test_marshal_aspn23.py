@@ -29,66 +29,49 @@ class Struct:
         self.function_to_prep_buf: List[str] = []
         self.function_free_buf: List[str] = []
         self.function_test_buf: List[str] = []
-        self.create_basic_lcm_type_function_declaration_template = dedent(
-            f"""
+        self.create_basic_lcm_type_function_declaration_template = dedent(f"""
             static {self.struct_name_lcm} create_basic_{self.struct_name_lcm}(void);
-        """
-        )
-        self.free_basic_lcm_type_function_declaration_template = dedent(
-            f"""
+        """)
+        self.free_basic_lcm_type_function_declaration_template = dedent(f"""
             static void free_basic_{self.struct_name_lcm}({self.struct_name_lcm}* lcm_msg);
-        """
-        )
-        self.type_test_declaration_template = dedent(
-            f"""
+        """)
+        self.type_test_declaration_template = dedent(f"""
             static void test_marshal_{self.struct_name_versioned}({self.struct_name_lcm}* lcm_msg, {self.struct_name}* aspn);
-        """
-        )
-        self.create_basic_c_type_function_declaration_template = dedent(
-            f"""
+        """)
+        self.create_basic_c_type_function_declaration_template = dedent(f"""
             static {self.struct_name} create_basic_{self.struct_name}(void);
-        """
-        )
-        self.create_basic_lcm_type_function_template = dedent(
-            f"""
+        """)
+        self.create_basic_lcm_type_function_template = dedent(f"""
             static {self.struct_name_lcm} create_basic_{self.struct_name_lcm}(void) {{{{
                 {self.struct_name_lcm} lcm_msg;
                 {{function_prep}}
                 return lcm_msg;
             }}}}
-        """
-        )
-        self.free_basic_lcm_type_function_template = dedent(
-            f"""
+        """)
+        self.free_basic_lcm_type_function_template = dedent(f"""
             static void free_basic_{self.struct_name_lcm}({self.struct_name_lcm}* lcm_msg) {{{{
                 {{function_free}}
             }}}}
-        """
-        )
-        self.type_test_function_template = dedent(
-            f"""
+        """)
+        self.type_test_function_template = dedent(f"""
             static void test_marshal_{self.struct_name_versioned}({self.struct_name_lcm}* lcm_msg, {self.struct_name}* aspn) {{{{
                 {{function_test}}
             }}}}
-        """
-        )
-        self.create_basic_c_type_function_template = dedent(
-            f"""
+        """)
+        self.create_basic_c_type_function_template = dedent(f"""
             static {self.struct_name} create_basic_{self.struct_name}(void) {{{{
                 {self.struct_name} aspn;
                 {{function_prep}}
                 return aspn;
             }}}}
-        """
-        )
+        """)
         self.run_test_from_function_template = dedent(
             f"g_test_add_func(\"/lcm_aspn23_transport_plugin/test_marshal_{self.struct_name_lcm}\", test_marshal_{self.struct_name_lcm});"
         )
         self.run_test_to_function_template = dedent(
             f"g_test_add_func(\"/lcm_aspn23_transport_plugin/test_marshal_{self.struct_name_versioned}\", test_marshal_{self.struct_name_versioned});"
         )
-        self.test_from_function_template = dedent(
-            f"""
+        self.test_from_function_template = dedent(f"""
             static void test_marshal_{self.struct_name_lcm}(void) {{{{
                 {self.struct_name_lcm}* lcm_msg = malloc(sizeof({self.struct_name_lcm}));
                 {{function_prep}}
@@ -98,10 +81,8 @@ class Struct:
                 free(lcm_msg);
                 {self.fn_basename}_free(aspn);
             }}}}
-        """
-        )
-        self.test_to_function_template = dedent(
-            f"""
+        """)
+        self.test_to_function_template = dedent(f"""
             static void test_marshal_{self.struct_name_versioned}(void) {{{{
                 {self.struct_name}* aspn = malloc(sizeof({self.struct_name}));
                 {{function_prep}}
@@ -112,8 +93,7 @@ class Struct:
                 free(lcm_msg);
                 {self.fn_basename}_free(aspn);
             }}}}
-        """
-        )
+        """)
 
 
 class AspnYamlToTestMarshalAspn23(Backend):

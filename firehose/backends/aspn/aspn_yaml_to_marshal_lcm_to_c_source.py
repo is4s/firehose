@@ -22,21 +22,17 @@ class Struct:
         self.function_args: List[str] = []
         self.function_prep_buf: List[str] = []
         self.function_free_buf: List[str] = []
-        self.function_new_template = dedent(
-            f"""
+        self.function_new_template = dedent(f"""
                 {self.struct_name}* out = {self.fn_basename}_new({{function_args}});
-        """
-        )
-        self.function_template = dedent(
-            f"""
+        """)
+        self.function_template = dedent(f"""
             {self.struct_name}* marshal_{self.struct_name_lcm}({self.struct_name_lcm}* lcm_msg) {{{{
                 {{function_prep}}
                 {{function_new}}
                 {{function_free}}
                 return out;
             }}}}
-        """
-        )
+        """)
 
 
 class AspnYamlToMarshalLCMToCSource(Backend):

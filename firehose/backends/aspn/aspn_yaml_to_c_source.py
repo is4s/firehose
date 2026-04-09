@@ -28,8 +28,7 @@ class Struct:
             "if (NULL == self) return NULL;"
         ]
         self.free_pointer_fields_buf: List[str] = []
-        self.header_template = dedent(
-            f"""
+        self.header_template = dedent(f"""
             /*
              * This code is generated via firehose.
              * DO NOT hand edit code.  Make any changes required using the firehose repo instead
@@ -60,17 +59,14 @@ class Struct:
                 if (NULL == self) return;
                 {{free_pointer_fields}}
             }}}}
-        """
-        )
+        """)
 
-        self.free_ptr_field_template = dedent(
-            """
+        self.free_ptr_field_template = dedent("""
             if (self->{field} != NULL) {{
                 free(self->{field});
                 self->{field} = NULL;
             }}
-        """
-        )
+        """)
 
 
 class AspnYamlToCSource(Backend):
@@ -94,16 +90,12 @@ class AspnYamlToCSource(Backend):
         arr_type: str,
         nullable: bool = False,
     ):
-        self.current_struct.constructor_body_buf.append(
-            dedent(
-                f"""
+        self.current_struct.constructor_body_buf.append(dedent(f"""
             if ({arr_name} != NULL)
                     memcpy(self->{arr_name}, {arr_name}, {arr_len} * sizeof({arr_type}));
             else
                 for (size_t ii = 0; ii < {arr_len}; ii++) self->{arr_name}[ii] = NAN;
-        """
-            )
-        )
+        """))
 
     def _process_array_ptr_init(
         self,
@@ -123,30 +115,24 @@ class AspnYamlToCSource(Backend):
                 free(pointer);
             }}
             '''
-            self.current_struct.free_pointer_fields_buf.append(
-                f'''
+            self.current_struct.free_pointer_fields_buf.append(f'''
                 if (self->{arr_name} != NULL && self->{array_len_ptr_name} !=0) {{
                     for (size_t ii = 0; ii < self->{array_len_ptr_name}; ii++)
 			            {basename}_free_members(&self->{arr_name}[ii]);
                     free(self->{arr_name});
                 }}
-                '''
-            )
+                ''')
         else:
-            self.current_struct.free_pointer_fields_buf.append(
-                f'''
+            self.current_struct.free_pointer_fields_buf.append(f'''
                 if (self->{arr_name} != NULL && self->{array_len_ptr_name} !=0) {{
                     free(self->{arr_name});
                 }}
-                '''
-            )
+                ''')
             copy_array = f'''
             {copy_array}
             memcpy(self->{arr_name}, {arr_name}, sizeof({arr_type}) * {array_len_ptr_name});
             '''
-        self.current_struct.constructor_body_buf.append(
-            dedent(
-                f"""
+        self.current_struct.constructor_body_buf.append(dedent(f"""
             self->{arr_name} = NULL;
             if ({arr_name} != NULL && {array_len_ptr_name} !=0) {{
                 if ({array_len_ptr_name} == 0) self->{arr_name} = NULL;
@@ -158,9 +144,7 @@ class AspnYamlToCSource(Backend):
                     return NULL;
                 }}
             }}
-        """
-            )
-        )
+        """))
 
     def _process_matrix_ptr_init(
         self,
@@ -173,9 +157,7 @@ class AspnYamlToCSource(Backend):
         self.current_struct.constructor_body_buf.insert(
             0, f'size_t {mat_name}_elements;'
         )
-        self.current_struct.constructor_body_buf.append(
-            dedent(
-                f"""
+        self.current_struct.constructor_body_buf.append(dedent(f"""
             self->{mat_name} = NULL;
             if ({mat_name} != NULL && {mat_ptr_x} != 0 && {mat_ptr_y} != 0) {{
                 {mat_name}_elements = {mat_ptr_x} * {mat_ptr_y};
@@ -188,9 +170,7 @@ class AspnYamlToCSource(Backend):
                     return NULL;
                 }}
             }}
-        """
-            )
-        )
+        """))
         self.current_struct.free_pointer_fields_buf.append(
             f'free(self->{mat_name});'
         )
@@ -206,18 +186,14 @@ class AspnYamlToCSource(Backend):
         total_size = mat_len_x * mat_len_y
         if total_size <= 0:
             raise ValueError('X and Y must both be positive integers!')
-        self.current_struct.constructor_body_buf.append(
-            dedent(
-                f"""
+        self.current_struct.constructor_body_buf.append(dedent(f"""
             if ({mat_name} != NULL)
                 memcpy(self->{mat_name}, {mat_name}, {total_size} * sizeof({mat_type}));
             else
                 for (size_t ii = 0; ii < {mat_len_x}; ii++)
                     for (size_t jj = 0; jj < {mat_len_y}; jj++)
                         self->{mat_name}[ii][jj] = NAN;
-        """
-            )
-        )
+        """))
 
     def generate(self) -> str:
         # TODO- sort the struct params and "new" function params so they match and are in
@@ -369,43 +345,33 @@ class AspnYamlToCSource(Backend):
             # Special case: fields called "observation_characteristics" have a companion field
             # called "has_observation_characteristics" that determines validity.
             if field_name == 'observation_characteristics':
-                self.current_struct.constructor_body_buf.append(
-                    f"""
+                self.current_struct.constructor_body_buf.append(f"""
                     if (has_observation_characteristics) {{
                         {field_type_name}* {field_name}_prep = {basename}_copy({field_name});
                         self->{field_name} = *{field_name}_prep;
                         free({field_name}_prep);
                     }}
-                    """
-                )
-                self.current_struct.new_call_prep.append(
-                    f'''
+                    """)
+                self.current_struct.new_call_prep.append(f'''
                     {field_type_name}* {field_name}_prep = NULL;
                     if (input->has_observation_characteristics)
                         {field_name}_prep = {basename}_copy(&input->{field_name});
-                    '''
-                )
-                self.current_struct.new_call_cleanup.append(
-                    f'''
+                    ''')
+                self.current_struct.new_call_cleanup.append(f'''
                     if (input->has_observation_characteristics)
                         {basename}_free({field_name}_prep);
-                    '''
-                )
-                self.current_struct.free_pointer_fields_buf.append(
-                    f'''
+                    ''')
+                self.current_struct.free_pointer_fields_buf.append(f'''
                     if (self->has_observation_characteristics)
                         {basename}_free_members(&self->{field_name});
-                    '''
-                )
+                    ''')
             # All other type classes.
             else:
-                self.current_struct.constructor_body_buf.append(
-                    f"""
+                self.current_struct.constructor_body_buf.append(f"""
                     {field_type_name}* {field_name}_prep = {basename}_copy({field_name});
                     self->{field_name} = *{field_name}_prep;
                     free({field_name}_prep);
-                    """
-                )
+                    """)
                 self.current_struct.new_call_prep.append(
                     f'{field_type_name}* {field_name}_prep = {basename}_copy(&input->{field_name});'
                 )

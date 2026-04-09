@@ -24,21 +24,17 @@ class Struct:
         self.to_lcm = to_lcm
         self.assignments: list[str] = []
         self.imports_aspn = []
-        self.to_lcm_template = dedent(
-            f"""
+        self.to_lcm_template = dedent(f"""
             def {pascal_to_snake(pascal_struct_name)}_to_lcm(old: {pascal_struct_name}) -> Lcm{pascal_struct_name}:
             {INDENT}msg = Lcm{pascal_struct_name}()
             {{assigns}}
 
             {INDENT}return msg
-            """
-        )
-        self.from_lcm_template = dedent(
-            f"""
+            """)
+        self.from_lcm_template = dedent(f"""
             def lcm_to_{pascal_to_snake(pascal_struct_name)}(old: Lcm{pascal_struct_name}) -> {pascal_struct_name}:
             {INDENT}return {pascal_struct_name}({{fields}})
-            """
-        )
+            """)
 
 
 PRIMITIVES = ["float", "int", "bool", "str"]
@@ -130,8 +126,7 @@ class AspnYamlToLCMTranslations(Backend):
         decode_lcm_map = "\n".join(decode_lcm_map)
 
         format_and_write_to_file(
-            dedent(
-                """\
+            dedent("""\
                 from typing import TypeAlias, Union, Callable
                 import numpy as np
 
@@ -158,8 +153,7 @@ class AspnYamlToLCMTranslations(Backend):
                 decode_lcm_map: dict[bytes, Callable] = {{
                 {decode_lcm_map}
                 }}\
-                """
-            ).format(
+                """).format(
                 imports=imports,
                 alias_aspn=alias_aspn,
                 alias_lcm=alias_lcm,
@@ -172,8 +166,7 @@ class AspnYamlToLCMTranslations(Backend):
         )
 
         format_and_write_to_file(
-            dedent(
-                """\
+            dedent("""\
                 # Follow Python export conventions:
                 # https://typing.readthedocs.io/en/latest/spec/distributing.html#import-conventions
                 from .lcm_translations import (
@@ -184,8 +177,7 @@ class AspnYamlToLCMTranslations(Backend):
                     decode_lcm_map as decode_lcm_map,
                     {exports}
                 )\
-                """
-            ).format(exports=exports),
+                """).format(exports=exports),
             join(self.output_folder, "__init__.py"),
         )
 

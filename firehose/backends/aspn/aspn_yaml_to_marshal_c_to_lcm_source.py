@@ -23,13 +23,11 @@ class Struct:
         self.struct_enum: str = f"ASPN_{snake_case_struct_name}".upper()
         self.fn_basename: str = f"aspn_{snake_case_struct_name}".lower()
         self.function_assign_buf: List[str] = []
-        self.function_template = dedent(
-            f"""
+        self.function_template = dedent(f"""
             void marshal_{self.struct_name_versioned}({self.struct_name_lcm}* lcm_msg, const {self.struct_name}* aspn) {{{{
                 {{function_assign}}
             }}}}
-        """
-        )
+        """)
 
 
 class AspnYamlToMarshalCToLCMSource(Backend):

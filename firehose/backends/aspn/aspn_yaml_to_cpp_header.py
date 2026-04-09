@@ -429,8 +429,7 @@ class Struct:
         if class_name == 'TypeHeader':
             destructor = 'virtual ~TypeHeader();'
 
-        self.header_template = dedent(
-            f"""
+        self.header_template = dedent(f"""
             // This code is generated via firehose.
             // DO NOT hand edit code. Make any changes required using the firehose repo instead.
 
@@ -494,8 +493,7 @@ class Struct:
 
             {{extra_declarations}}
             }}}}
-        """
-        )
+        """)
 
 
 class AspnYamlToCppHeader(Backend):

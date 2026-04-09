@@ -333,8 +333,7 @@ class Struct:
                 {self.fn_basename}_free(this->c_struct);
         }}}}'''
 
-        self.source_template = dedent(
-            f"""
+        self.source_template = dedent(f"""
             // This code is generated via firehose.
             // DO NOT hand edit code. Make any changes required using the firehose repo instead.
 
@@ -425,8 +424,7 @@ class Struct:
             {{extra_definitions}}
             }}}}  // namespace {ASPN_PREFIX.lower()}_{matrix_type_lower}
 
-        """
-        )
+        """)
 
 
 class AspnYamlToCppSource(Backend):
@@ -539,20 +537,16 @@ class AspnYamlToCppSource(Backend):
             self.current_struct.param_prep_prep.append(
                 f'auto {field_name} = other.get_{field_name}();'
             )
-            self.current_struct.param_prep.append(
-                f'''
+            self.current_struct.param_prep.append(f'''
                 {type_name}* {field_name}_prep = new {type_name}[{field_name}.size()];
                 for (size_t ii = 0; ii < {field_name}.size(); ii++) {{
                     auto c_object = {field_name}[ii].get_aspn_c();
                     {field_name}_prep[ii] = *c_object;
                 }}
-                '''
-            )
-            self.current_struct.param_prep_cleanup.append(
-                f'''
+                ''')
+            self.current_struct.param_prep_cleanup.append(f'''
                 delete[] {field_name}_prep;
-                '''
-            )
+                ''')
             type_name = type_name[len(ASPN_PREFIX) :].strip("*")
             set_lengths = ''
             if isinstance(data_len, str):
@@ -572,8 +566,7 @@ class AspnYamlToCppSource(Backend):
                         f'{field_name}.size()'
                     )
             fn_basename = pascal_to_snake(f_type)
-            self.current_struct.setters_getters_buf.append(
-                f"""
+            self.current_struct.setters_getters_buf.append(f"""
                 std::vector<{type_name}> {self.current_struct.class_name}::get_{field_name}() const {{
                     nullptr_check();
                     if (c_struct->{field_name} == nullptr) return {{}};
@@ -592,8 +585,7 @@ class AspnYamlToCppSource(Backend):
                     }}
                     {set_lengths}
                 }}
-            """
-            )
+            """)
             self.current_struct.constructor_param_buf.append(
                 f'std::vector<{type_name}> {field_name}'
             )
@@ -648,19 +640,16 @@ class AspnYamlToCppSource(Backend):
                 self.current_struct.param_prep_prep.append(
                     f'auto {field_name} = other.get_{field_name}();'
                 )
-                self.current_struct.param_prep.append(
-                    f'''
+                self.current_struct.param_prep.append(f'''
                     {type_name} {field_name}_prep[{data_len}];
                     for (size_t ii = 0; ii < {data_len}; ii++)
                         {field_name}_prep[ii] = {field_name}{self.index_vector('ii')};
-                    '''
-                )
+                    ''')
                 self.current_struct.param_passthrough.append(
                     f'{field_name}_prep'
                 )
                 self.current_struct.param_getters.append(f'{field_name}_prep')
-            self.current_struct.setters_getters_buf.append(
-                f"""
+            self.current_struct.setters_getters_buf.append(f"""
                 {self.vector(type_name)} {self.current_struct.class_name}::get_{field_name}() const {{
                     nullptr_check();
                     {ptr_field_check}
@@ -672,8 +661,7 @@ class AspnYamlToCppSource(Backend):
                 memcpy(c_struct->{field_name}, {field_name}.data(), {data_len} * sizeof({type_name}));
                 {set_lengths}
             }}
-            """
-            )
+            """)
             self.current_struct.constructor_param_buf.append(
                 f'{self.vector(type_name)} {field_name}'
             )
@@ -749,14 +737,12 @@ class AspnYamlToCppSource(Backend):
             self.current_struct.param_prep_prep.append(
                 f'auto {field_name} = other.get_{field_name}();'
             )
-            self.current_struct.param_prep.append(
-                f'''
+            self.current_struct.param_prep.append(f'''
                 {type_name} {field_name}_prep[{x}][{y}];
                 for (size_t row = 0; row < {x}; row++)
                     for (size_t col = 0; col < {y}; col++)
                         {field_name}_prep[row][col] = {field_name}{self.index_matrix('row', 'col', field_name)};
-                '''
-            )
+                ''')
             self.current_struct.param_passthrough.append(f'{field_name}_prep')
             self.current_struct.param_getters.append(f'{field_name}_prep')
         else:
@@ -768,8 +754,7 @@ class AspnYamlToCppSource(Backend):
             )
             raise NotImplementedError
 
-        self.current_struct.setters_getters_buf.append(
-            f"""
+        self.current_struct.setters_getters_buf.append(f"""
             {self.matrix(type_name)} {self.current_struct.class_name}::get_{field_name}() const {{
                 nullptr_check();
                 {ptr_field_check}
@@ -781,8 +766,7 @@ class AspnYamlToCppSource(Backend):
             memcpy(c_struct->{field_name}, {field_name}{self.matrix_to_pointer()}, {x} * {y} * sizeof({type_name}));
             {set_lengths}
         }}
-        """
-        )
+        """)
 
         field_str = f"{self.matrix(type_name)} {field_name}"
         self.current_struct.constructor_param_buf.append(field_str)
@@ -816,8 +800,7 @@ class AspnYamlToCppSource(Backend):
         self.current_struct.param_getters.append(
             f'const_cast<char*>(other.get_{field_name}().c_str())'
         )
-        self.current_struct.setters_getters_buf.append(
-            f"""
+        self.current_struct.setters_getters_buf.append(f"""
             std::string {self.current_struct.class_name}::get_{field_name}() const {{
                 nullptr_check();
                 return c_struct->{field_name};
@@ -828,8 +811,7 @@ class AspnYamlToCppSource(Backend):
                 free(c_struct->{field_name});
                 c_struct->{field_name} = strdup({field_name}.c_str());
             }}
-            """
-        )
+            """)
         self.current_struct.constructor_param_buf.append(
             f"const std::string& {field_name}"
         )
@@ -866,14 +848,12 @@ class AspnYamlToCppSource(Backend):
 
             # Generate getters for length fields, but skip using them in constructors and don't
             # generate setters.
-            self.current_struct.setters_getters_buf.append(
-                f"""
+            self.current_struct.setters_getters_buf.append(f"""
                 {field_type_name} {self.current_struct.class_name}::get_{field_name}() const {{
                     nullptr_check();
                     return c_struct->{field_name};
                 }}
-                """
-            )
+                """)
             return
         if field_type_name.startswith(f"{ASPN_PREFIX}Type"):
             self.current_struct.param_prep_prep.append(
@@ -889,41 +869,34 @@ class AspnYamlToCppSource(Backend):
             # Special case: fields called "observation_characteristics" have a companion field
             # called "has_observation_characteristics" that determines validity.
             if field_name == 'observation_characteristics':
-                self.current_struct.setters_getters_buf.append(
-                    f"""
+                self.current_struct.setters_getters_buf.append(f"""
                     {field_type_name} {self.current_struct.class_name}::get_{field_name}() const {{
                         nullptr_check();
                         if (c_struct->has_observation_characteristics)
                             return {function_basename}_copy(&c_struct->{field_name});
                         return nullptr;
                     }}
-                    """
-                )
+                    """)
             else:
-                self.current_struct.setters_getters_buf.append(
-                    f"""
+                self.current_struct.setters_getters_buf.append(f"""
                     {field_type_name} {self.current_struct.class_name}::get_{field_name}() const {{
                         nullptr_check();
                         return {function_basename}_copy(&c_struct->{field_name});
                     }}
-                    """
-                )
-            self.current_struct.setters_getters_buf.append(
-                f"""
+                    """)
+            self.current_struct.setters_getters_buf.append(f"""
                 void {self.current_struct.class_name}::set_{field_name}({field_type_name} {field_name}) {{
                     nullptr_check();
                     auto c_object = std::move({field_name}).get_aspn_c();
                     c_struct->{field_name} = *c_object;
                 }}
-                """
-            )
+                """)
         else:
             self.current_struct.param_passthrough.append(field_name)
             self.current_struct.param_getters.append(
                 f'other.get_{field_name}()'
             )
-            self.current_struct.setters_getters_buf.append(
-                f"""
+            self.current_struct.setters_getters_buf.append(f"""
                 {field_type_name} {self.current_struct.class_name}::get_{field_name}() const {{
                     nullptr_check();
                     return c_struct->{field_name};
@@ -933,8 +906,7 @@ class AspnYamlToCppSource(Backend):
                     nullptr_check();
                     c_struct->{field_name} = {field_name};
                 }}
-                """
-            )
+                """)
         field_str = f"{field_type_name} {field_name}"
         self.current_struct.constructor_param_buf.append(field_str)
 
@@ -963,8 +935,7 @@ class AspnYamlToCppSource(Backend):
         self.current_struct.constructor_param_buf.append(field_str)
         self.current_struct.param_passthrough.append(field_name)
         self.current_struct.param_getters.append(f'other.get_{field_name}()')
-        self.current_struct.setters_getters_buf.append(
-            f"""
+        self.current_struct.setters_getters_buf.append(f"""
             {field_type_name} {self.current_struct.class_name}::get_{field_name}() const {{
                 nullptr_check();
                 return c_struct->{field_name};
@@ -974,8 +945,7 @@ class AspnYamlToCppSource(Backend):
                 nullptr_check();
                 c_struct->{field_name} = {field_name};
             }}
-            """
-        )
+            """)
 
 
 class AspnYamlToXtensorSource(AspnYamlToCppSource):

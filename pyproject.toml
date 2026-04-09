@@ -9,6 +9,7 @@ requires-python = '>=3.10'
 dependencies = [
     # main branch, committed 9 April 2026
     'aspn @ git+https://github.com/Open-PNT/ASPN-ICD.git@49473ac21ff300d861f7266a9ca38c4fd2b7265a',
+    'black==26.3.1',
     'cxxheaderparser==1.6.2',
     'isort',
     'lcm>=1,<2',
@@ -18,7 +19,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    'black==22.12.0',
     'pip',
     'meson>=1,<1.10',
     "mypy>=1.9.0",

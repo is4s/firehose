@@ -21,21 +21,17 @@ class Struct:
         self.to_ros: bool = to_ros
         self.assignments: list[str] = []
         self.imports_enum: set[str] = set()
-        self.to_ros_template: str = dedent(
-            f"""\
+        self.to_ros_template: str = dedent(f"""\
             def {pascal_to_snake(self.struct_name)}_to_ros(old: {self.struct_name}) -> Ros{self.struct_name}:
             {INDENT}msg = Ros{self.struct_name}()
             {{assigns}}
 
             {INDENT}return msg
-            """
-        )
-        self.from_ros_template = dedent(
-            f"""\
+            """)
+        self.from_ros_template = dedent(f"""\
             def ros_to_{snake_struct_name}(old: Ros{self.struct_name}) -> {self.struct_name}:
             {INDENT}return {self.struct_name}({{assigns}})
-            """
-        )
+            """)
 
 
 class AspnYamlToROSTranslations(Backend):
@@ -119,8 +115,7 @@ class AspnYamlToROSTranslations(Backend):
         from_ros_map = "\n".join(from_ros_map)
 
         format_and_write_to_file(
-            dedent(
-                """\
+            dedent("""\
                 from typing import TypeAlias, Union, Callable
                 import numpy as np
 
@@ -143,8 +138,7 @@ class AspnYamlToROSTranslations(Backend):
                 from_ros_map: dict[type[RosMsg], Callable] = {{
                 {from_ros_map}
                 }}\
-                """
-            ).format(
+                """).format(
                 imports=imports,
                 alias_aspn=alias_aspn,
                 alias_ros=alias_ros,
@@ -156,8 +150,7 @@ class AspnYamlToROSTranslations(Backend):
         )
 
         format_and_write_to_file(
-            dedent(
-                """\
+            dedent("""\
                 # Follow Python export conventions:
                 # https://typing.readthedocs.io/en/latest/spec/distributing.html#import-conventions
                 from .aspn_ros_node import AspnRosNode as AspnRosNode
@@ -167,8 +160,7 @@ class AspnYamlToROSTranslations(Backend):
                 from .ros_translations import (
                 {exports}
                 )\
-                """
-            ).format(exports=exports),
+                """).format(exports=exports),
             join(self.output_folder, "__init__.py"),
         )
 

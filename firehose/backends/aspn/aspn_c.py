@@ -45,10 +45,7 @@ class AspnCBackend(Backend):
 
     def _generate_meson_build(self):
         print("Generating meson.build")
-        meson_build_template = dedent(
-            dedent(
-                dedent(
-                    """
+        meson_build_template = dedent(dedent(dedent("""
             # This code is generated via firehose.
             # DO NOT hand edit code. Make any changes required using the firehose repo instead.
 
@@ -109,10 +106,7 @@ class AspnCBackend(Backend):
 
             endif
 
-        """
-                )
-            )
-        )
+        """)))
 
         types_meson = '    \'' + '\',\n    \''.join(self.all_types_enum) + '\''
         meson_build = meson_build_template.format(

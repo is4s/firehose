@@ -16,16 +16,14 @@ class Struct:
         self.struct_docstr: str = "<Missing ROS Docstring>"
         self.struct_fields_buf: List[str] = []
         self.struct_name: str = struct_name
-        self.struct_template = dedent(
-            f"""
+        self.struct_template = dedent(f"""
             # This code is generated via firehose.
             # DO NOT hand edit code.  Make any changes required using the firehose repo instead
 
             {{struct_docstr}}
 
             {{struct_fields}}
-            """
-        )
+            """)
 
 
 class AspnYamlToROS(Backend):
@@ -61,8 +59,7 @@ class AspnYamlToROS(Backend):
             format_and_write_to_file(file_contents, output_filename)
         msg_names = '\n  '.join(msg_names)
         format_and_write_to_file(
-            dedent(
-                f"""\
+            dedent(f"""\
                 cmake_minimum_required(VERSION 3.8)
                 project(aspn23_ros_interfaces)
 
@@ -84,8 +81,7 @@ class AspnYamlToROS(Backend):
                 endif()
 
                 ament_package()\
-                """
-            ).format(msg_names=msg_names),
+                """).format(msg_names=msg_names),
             join(self.output_folder, "CMakeLists.txt"),
         )
 

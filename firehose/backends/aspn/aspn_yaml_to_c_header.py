@@ -29,8 +29,7 @@ class Struct:
         self.pointer_fields: List[str] = []
         self.nullability_macro_start: str = ''
         self.nullability_macro_end: str = ''
-        self.header_template = dedent(
-            f"""
+        self.header_template = dedent(f"""
             /*
              * This code is generated via firehose.
              * DO NOT hand edit code.  Make any changes required using the firehose repo instead
@@ -61,25 +60,20 @@ class Struct:
             #ifdef __cplusplus
             }}}}  // extern "C"
             #endif
-        """
-        )
+        """)
 
-        self.free_docstr_no_ptr = dedent(
-            f"""\
+        self.free_docstr_no_ptr = dedent(f"""\
             free() all memory held by the given {self.struct_name},
             including the struct itself.
-        """
-        )
+        """)
 
-        self.free_docstr_w_ptrs = dedent(
-            f"""\
+        self.free_docstr_w_ptrs = dedent(f"""\
             {self.free_docstr_no_ptr}
             Pointer fields ({{pointer_field_str}}) will be freed using
             free() if they are non-NULL. If any of these have been populated
             using non-malloc'd memory, free them manually and set them to
             NULL before calling this function.
-        """
-        )
+        """)
 
 
 class AspnYamlToCHeader(Backend):

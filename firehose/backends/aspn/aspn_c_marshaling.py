@@ -35,8 +35,7 @@ class Struct:
             f"""
             void marshal_{self.struct_name_versioned}({self.struct_name_lcm}* lcm_msg, const {self.struct_name}* aspn);\n"""
         )
-        self.header_template = dedent(
-            """/*
+        self.header_template = dedent("""/*
              * This code is generated via firehose.
              * DO NOT hand edit code.  Make any changes required using the firehose repo instead
              */
@@ -56,8 +55,7 @@ class Struct:
             #ifdef __cplusplus
             }}  // extern "C"
             #endif
-        """
-        )
+        """)
 
 
 class AspnCMarshalingBackend(Backend):

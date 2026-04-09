@@ -116,8 +116,7 @@ class AspnCppBackend(Backend):
 
     def _generate_meson_build(self):
         print("Generating meson.build")
-        meson_build = dedent(
-            """
+        meson_build = dedent("""
             # This code is generated via firehose.
             # DO NOT hand edit code. Make any changes required using the firehose repo instead.
 
@@ -169,10 +168,8 @@ class AspnCppBackend(Backend):
             aspn_xtensor_deps = [aspn_c_dep, xtensor_dep]
             aspn_xtensor_py_deps = [xtensor_dep, xtensor_python_dep, pybind11_dep]
             aspn_eigen_deps = [aspn_c_dep, eigen_dep]
-        """
-        )
-        matrix_specific_template = dedent(
-            """
+        """)
+        matrix_specific_template = dedent("""
             aspn_{matrix}_sources = [
             {sources}
             ]
@@ -209,8 +206,7 @@ class AspnCppBackend(Backend):
                 meson.override_dependency('aspn23-{matrix}', aspn_{matrix}_dep)
 
             endif
-        """
-        )
+        """)
         for generator in self.header_generators:
             all_source_files = [
                 join('src/', ASPN_DIR, generator.directory, source_file)
