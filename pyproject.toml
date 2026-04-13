@@ -7,7 +7,8 @@ authors = [ { name = 'IS4S', email = 'pntos@is4s.com' } ]
 requires-python = '>=3.10'
 
 dependencies = [
-    'aspn @ git+https://github.com/Open-PNT/ASPN-ICD.git@b2e7b64067b9cd0171f02ffe773c1174a7e2eb96',
+    # main branch, committed 9 April 2026
+    'aspn @ git+https://github.com/Open-PNT/ASPN-ICD.git@49473ac21ff300d861f7266a9ca38c4fd2b7265a',
     'cxxheaderparser==1.6.2',
     'isort',
     'lcm>=1,<2',

@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.11'",
@@ -9,7 +9,7 @@ resolution-markers = [
 [[package]]
 name = "aspn"
 version = "2023"
-source = { git = "https://github.com/Open-PNT/ASPN-ICD.git?rev=b2e7b64067b9cd0171f02ffe773c1174a7e2eb96#b2e7b64067b9cd0171f02ffe773c1174a7e2eb96" }
+source = { git = "https://github.com/Open-PNT/ASPN-ICD.git?rev=49473ac21ff300d861f7266a9ca38c4fd2b7265a#49473ac21ff300d861f7266a9ca38c4fd2b7265a" }
 
 [[package]]
 name = "black"
@@ -85,7 +85,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aspn", git = "https://github.com/Open-PNT/ASPN-ICD.git?rev=b2e7b64067b9cd0171f02ffe773c1174a7e2eb96" },
+    { name = "aspn", git = "https://github.com/Open-PNT/ASPN-ICD.git?rev=49473ac21ff300d861f7266a9ca38c4fd2b7265a" },
     { name = "cxxheaderparser", specifier = "==1.6.2" },
     { name = "isort" },
     { name = "lcm", specifier = ">=1,<2" },
