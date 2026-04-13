@@ -537,7 +537,7 @@ def get_args() -> argparse.Namespace:
     parser = FirehoseArgParse(
         description=(
             "Convenience script for generating code from ASPN ICD files and "
-            "optionally staging the output for use in firehose-outputs"
+            "optionally staging the output for use in aspn-generated"
         )
     )
 
@@ -575,7 +575,7 @@ def get_args() -> argparse.Namespace:
         metavar="",
         help=(
             "Staging directory containing any additional non-generated files to "
-            f"push to firehose-outputs. Defaults to {DEFAULT_STAGING_INPUT_DIR}"
+            f"push to aspn-generated. Defaults to {DEFAULT_STAGING_INPUT_DIR}"
         ),
         type=normalized_and_created_path,
     )

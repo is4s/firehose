@@ -60,7 +60,7 @@ python3 generate.py --help
 
 usage: generate.py [-h] [--aspn-icd-dir] [--extra-icd-files-dir] [-b] [-o] [-s] [-a] [--list-targets] [--targets [...]] [--interactive]
 
-Convenience script for generating code from ASPN ICD files and optionally staging the output for use in firehose-outputs
+Convenience script for generating code from ASPN ICD files and optionally staging the output for use in aspn-generated
 
 options:
   -h, --help                show this help message and exit
@@ -70,7 +70,7 @@ options:
   -o , --output-dir         Directory to place generated output files.
                             Defaults to output
   -s , --staging-input-dir  Staging directory containing any additional non-generated
-                            files to push to firehose-outputs. Defaults to $PWD/staging
+                            files to push to aspn-generated. Defaults to $PWD/staging
 
   --aspn-icd-dir            Directory containing input Aspn YAML files for generation.
                             Defaults to $PWD/subprojects/aspn-icd-release-2023
@@ -147,7 +147,7 @@ ASPN C/C++ and python code, along with your extension messages.
 All output (including all files in `./staging`) will still be placed in the default output directory
 `./output`
 
-## **Adding custom ASPN messages to repo that uses firehose-outputs**
+## **Adding custom ASPN messages to repo that uses aspn-generated**
 
 If you'd like to add your own custom messages you can follow the example below, substituting values
 when necessary.
@@ -160,21 +160,21 @@ when necessary.
 
 ### **Steps**
 
-1.   Generate the new firehose-outputs locally the steps above.  For example:
+1.   Generate the new aspn-generated locally the steps above.  For example:
      ```shell
      python3 generate.py -o ./output --extra-icd-files-dir ./custom_messages --all
       ```
-2.  Copy the new outputs over the existing ones in the `firehose-outputs` subproject in the
+2.  Copy the new outputs over the existing ones in the `aspn-generated` subproject in the
     downstream project.
     ```shell
-    cp -r ./output/* ../<project>/subprojects/firehose-outputs/
+    cp -r ./output/* ../<project>/subprojects/aspn-generated/
     ```
 3.  Rebuild the downstream project and the new custom messages should be available.
 
 **Note-** Once you are satisfied with the results after testing, if you have push rights for
 `firehose`, you can create a new branch and point at the proper aspn-icd branch with your custom
-messages on it.  Then wait for the CI to build the subsequent `firehose-outputs` branch and point
-the `firehose-outputs.wrap` `revision` to that new commit in the project.
+messages on it.  Then wait for the CI to build the subsequent `aspn-generated` branch and point
+the `aspn-generated.wrap` `revision` to that new commit in the project.
 
 # Building ASPN-ROS
 
@@ -197,7 +197,7 @@ isolated Docker containers. These invoke `colcon build` on the stuff in
 `[output-dir]/aspn-ros` and generate installable ROS packages under
 `[output-dir]/ros_devel/humble` and `[output-dir]/ros_devel/jazzy`. To use
 them (whether inside or outside of a Docker container), simply `source
-firehose-outputs/ros_devel/humble/setup.bash`, for example (source whichever
+aspn-generated/ros_devel/humble/setup.bash`, for example (source whichever
 one matches your shell; sourcing `setup.sh` from `bash` will fail).
 
 ## Building with Docker
@@ -255,7 +255,7 @@ sourced:
 source /opt/ros/[humble/jazzy]/setup.[sh/bash/zsh]
 ```
 
-Now, either run the main container (see above) or clone `firehose-outputs`.
+Now, either run the main container (see above) or clone `aspn-generated`.
 Then:
 
 ```bash

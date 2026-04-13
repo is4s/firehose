@@ -71,8 +71,8 @@ jobs:
           run: |
                 eval `ssh-agent -s`
                 ssh-add - <<< '${{ secrets.PRIVATE_SSH_KEY_WRITE }}'
-                git clone git@github.com:Open-PNT/firehose-outputs.git
-                cd firehose-outputs
+                git clone git@github.com:is4s/aspn-generated.git
+                cd aspn-generated
                 git checkout $GITHUB_REF_NAME || git checkout -b $GITHUB_REF_NAME
                 cp -r .git ../output/
 
