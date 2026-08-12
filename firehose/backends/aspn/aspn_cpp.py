@@ -673,7 +673,9 @@ endif
             or self.struct_name.startswith('metadata')
             or self.class_name == 'Image'
         ):
-            current_type = 'ASPN_' + struct_name.upper()
+            current_type = (
+                f'{ASPN_PREFIX_UNVERSIONED_UPPER}_' + struct_name.upper()
+            )
 
             self.type_get_time_cases += f"""
             case {current_type}: {{
