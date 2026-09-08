@@ -14,6 +14,7 @@ from firehose.backends.aspn.utils import (
 
 class Struct:
     def __init__(self, snake_case_struct_name: str):
+        self.snake_struct_name = snake_case_struct_name
         self.struct_docstr: str = "<Missing C Docstring>"
         self.struct_name: str = (
             f"Aspn{snake_to_pascal(snake_case_struct_name)}"
@@ -151,6 +152,13 @@ class AspnYamlToMarshalCToLCMSource(Backend):
         deref="",
         nullable: bool = False,
     ):
+        if (
+            self.current_struct.snake_struct_name
+            == "measurement_satnav_subframe"
+            and field_name == "data_vector"
+        ):
+            # Special case: stored as uint8_t (bytes) in LCM, but as int8_t in C
+            type_name = "uint8_t"
         if isinstance(data_len, str):
             if data_len.isdigit():
                 length = data_len

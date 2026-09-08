@@ -13,6 +13,7 @@ from firehose.backends.aspn.utils import (
 
 class Struct:
     def __init__(self, snake_case_struct_name: str):
+        self.snake_struct_name = snake_case_struct_name
         self.struct_docstr: str = "<Missing C Docstring>"
         self.struct_name: str = (
             f"Aspn{snake_to_pascal(snake_case_struct_name)}"
@@ -198,7 +199,19 @@ class AspnYamlToMarshalLCMToCSource(Backend):
             "int32_t",
             "int64_t",
         ]:
-            self.current_struct.function_args.append(f"lcm_msg->{field_name}")
+            if (
+                self.current_struct.snake_struct_name
+                == "measurement_satnav_subframe"
+                and field_name == "data_vector"
+            ):
+                # Special case: stored as uint8_t (bytes) in LCM, but as int8_t in C
+                self.current_struct.function_args.append(
+                    f"(int8_t*)lcm_msg->{field_name}"
+                )
+            else:
+                self.current_struct.function_args.append(
+                    f"lcm_msg->{field_name}"
+                )
         else:
             self.current_struct.function_prep_buf.append(
                 f"""{self.remove_aspn_version(type_name)}** {field_name}_pointers = calloc(lcm_msg->{data_len}, sizeof({self.remove_aspn_version(type_name)}*));
