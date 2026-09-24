@@ -65,8 +65,8 @@ def is_string_array(type_: DecoratedType):
 # Will filter on types listed in match_types such that only types with the names
 # in match_types will return the type name. All others will return None.
 #
-# Note: cxxheaderparser does not substitude typedefs, so if the class contains
-# a typedef'd parameter it will always appear as a value, even if the typdef
+# Note: cxxheaderparser does not substitute typedefs, so if the class contains
+# a typedef'd parameter it will always appear as a value, even if the typedef
 # is a function.  Checking for typedef'd functions should be done before
 # calling this function to rule that out.
 def is_value(
@@ -131,7 +131,7 @@ def is_function_pointer_with_self(type_: DecoratedType, class_name: str):
     return None
 
 
-# Returns function arguments and return type if type_ is a typdef to a
+# Returns function arguments and return type if type_ is a typedef to a
 # function pointer with "class_name* self" (or "void* self") as the first
 # argument; otherwise None.
 def is_function_typedef_with_self(
