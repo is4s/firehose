@@ -103,10 +103,13 @@ def process_struct_field(
         )
         return
 
-    for aspn_t, c_t in type_mappings.items():
-        if aspn_t in field_type:
-            field_type = field_type.replace(aspn_t, c_t)
-            break
+    # don't replace all of the type bindings for python right away
+    # Numpy needs to know the size of floats/ints to convert correctly
+    if not isinstance(code_gen, AspnYamlToPython):
+        for aspn_t, c_t in type_mappings.items():
+            if aspn_t in field_type:
+                field_type = field_type.replace(aspn_t, c_t)
+                break
 
     if field_type.startswith('type_'):
         is_simple_field = True
@@ -142,7 +145,7 @@ def process_struct_field(
             field_name, f_type, x, y, doc_str, nullable=nullable
         )
         return
-
+    
     # If the type ends in [N] where N is a digit or [some_c_variable_name]
     # Then we will process a data pointer field
     match = re.search(r'\[(\w+|\d+)]$', field_type)

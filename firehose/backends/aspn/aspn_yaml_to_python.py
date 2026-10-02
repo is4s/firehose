@@ -10,6 +10,7 @@ import numpy as np
 from firehose.backends import Backend
 from firehose.backends.aspn.utils import (
     ASPN_PREFIX_LOWER,
+    ASPN_TO_PYTHON_MAPPINGS,
     INDENT,
     char_limit_docstr,
     format_and_write_py_file,
@@ -204,9 +205,11 @@ class AspnBase(Protocol):
     ):
         if self.current_struct is None:
             return
-
-        typehint = f"List[{type_name}]"
-        if isinstance(data_len, int) or type_name in ["float", "int"]:
+        simple_type_name = ASPN_TO_PYTHON_MAPPINGS.get(type_name, None)
+        if simple_type_name is None:
+            return
+        typehint = f"List[{simple_type_name}]"
+        if isinstance(data_len, int) or simple_type_name in ["float", "int"]:
             typehint = f"NDArray[np.{np.dtype(type_name).type.__name__}]"
         if nullable:
             typehint = f"Optional[{typehint}]"
