@@ -207,7 +207,7 @@ class AspnBase(Protocol):
             return
         simple_type_name = ASPN_TO_PYTHON_MAPPINGS.get(type_name, None)
         if simple_type_name is None:
-            return
+            simple_type_name = type_name
         typehint = f"List[{simple_type_name}]"
         if isinstance(data_len, int) or simple_type_name in ["float", "int"]:
             typehint = f"NDArray[np.{np.dtype(type_name).type.__name__}]"

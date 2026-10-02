@@ -145,7 +145,7 @@ def process_struct_field(
             field_name, f_type, x, y, doc_str, nullable=nullable
         )
         return
-    
+
     # If the type ends in [N] where N is a digit or [some_c_variable_name]
     # Then we will process a data pointer field
     match = re.search(r'\[(\w+|\d+)]$', field_type)
