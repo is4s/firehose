@@ -231,7 +231,11 @@ class AspnYamlToLCMTranslations(Backend):
                 if dim2_len:
                     nans = f"[{nans}] * {data_len}"
                 qualifier = f" if old.{field_name} is not None else {nans}"
-            if isinstance(dim1_len, int) or type_name in PRIMITIVES:
+            if type_name == "byte":
+                self.current_struct.assignments.append(
+                    f"{field_name} = old.{field_name}.tobytes()" + qualifier
+                )
+            elif isinstance(dim1_len, int) or type_name in PRIMITIVES:
                 self.current_struct.assignments.append(
                     f"{field_name} = old.{field_name}.tolist()" + qualifier
                 )
@@ -241,15 +245,26 @@ class AspnYamlToLCMTranslations(Backend):
                     f"for x in old.{field_name}]" + qualifier
                 )
         else:
-            if isinstance(dim1_len, int) or type_name in PRIMITIVES:
+            if (
+                isinstance(dim1_len, int)
+                or type_name in PRIMITIVES
+                or type_name == "byte"
+            ):
                 qualifier = ""
                 if nullable:
                     qualifier += (
                         f"if not np.isnan(old.{field_name}).any() else None"
                     )
-                self.current_struct.assignments.append(
-                    f"{field_name} = np.array(old.{field_name})" + qualifier
-                )
+                if type_name == "byte":
+                    self.current_struct.assignments.append(
+                        f"{field_name} = np.frombuffer(old.{field_name}, dtype=np.uint8)"
+                        + qualifier
+                    )
+                else:
+                    self.current_struct.assignments.append(
+                        f"{field_name} = np.array(old.{field_name})"
+                        + qualifier
+                    )
             else:
                 self.current_struct.assignments.append(
                     f"{field_name} = [lcm_to_{pascal_to_snake(type_name)}(x) "
@@ -265,6 +280,15 @@ class AspnYamlToLCMTranslations(Backend):
         deref="",
         nullable=None,
     ):
+        # Special case: the image_data field in measurement_image and the descriptor field in
+        # type_image_feature represent opaque data. These specific fields should be mapped to LCM's
+        # bytes type rather than widening to a signed integer.
+        if (
+            field_name == 'descriptor'
+            or field_name == 'image_data'
+            or field_name == 'data_vector'
+        ):
+            type_name = 'byte'
         self._process_array(field_name, type_name, nullable, data_len)
 
     def process_matrix_field(
