@@ -536,6 +536,17 @@ def _generate_legacy_submodule(lcm_python_output: str) -> None:
             else:
                 shutil.copy2(src_item, dst_item)
 
+    # Refactor the legacy submodule to import from itself rather than the top-level module.
+    for py_file in glob(join(dest_path, '*.py')):
+        with open(py_file, 'r') as f:
+            contents = f.read()
+        contents = contents.replace(
+            '\nimport aspn23_lcm\n',
+            '\nimport aspn23_lcm.legacy as aspn23_lcm\n',
+        )
+        with open(py_file, 'w') as f:
+            f.write(contents)
+
     # Add legacy submodule to main __init__.py
     init_file_path = join(lcm_python_output, 'aspn23_lcm', '__init__.py')
     with open(init_file_path, 'a') as f:
