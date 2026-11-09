@@ -40,7 +40,7 @@ To spin down the docker container, run:
 docker stop firehose
 ```
 
-## **Option 2:** Use bare metal (at your own risk)
+## **Option 2:** Use bare metal
 
 Install the packages from `docker/Dockerfile` on your operating system, modifying as necessary if
 you aren't using the Ubuntu LTS version in the `firehose` image.
@@ -53,6 +53,14 @@ uv sync
 source .venv/bin/activate
 ```
 
+Then generate with:
+
+```shell
+python3 ./generate.py --portable
+```
+
+If the above command was successful, you should be able to see the generated outputs in `output/`.
+
 # **Code Generation [`generate.py`]**
 
 Use the convenience wrapper script `generate.py` in the root directory to easily build, generate,
@@ -61,7 +69,7 @@ and stage outputs all at once.
 ```
 python3 generate.py --help
 
-usage: generate.py [-h] [--aspn-icd-dir] [--extra-icd-files-dir] [-b] [-o] [-s] [-a] [--list-targets] [--targets [...]] [--interactive]
+usage: generate.py [-h] [--aspn-icd-dir] [--extra-icd-files-dir] [-o] [-s] [-a | --portable | --list-targets | --targets [...] | --interactive]
 
 Convenience script for generating code from ASPN ICD files and optionally staging the output for use in aspn-generated
 
@@ -69,6 +77,10 @@ options:
   -h, --help                show this help message and exit
 
   -a, --all                 Generate all output formats
+
+  --portable                Generate all output formats that do not require non-
+                            portable dependencies. This is for usage in a bare-
+                            metal workflow.
 
   -o , --output-dir         Directory to place generated output files.
                             Defaults to output
@@ -212,19 +224,25 @@ yourself. You can use the same Docker container that the CI uses.
 > aspn_ros_translations` or `python3 generate.py -a`).
 
 To manually build one of these ROS containers, do
+
 ```bash
 docker build -t firehose-ros:humble --build-arg ROS_DISTRO=humble --build-arg UID=$(id -u) --build-arg GID=$(id -g) -f docker/Dockerfile.ros docker
 ```
+
 or
+
 ```bash
 docker build -t firehose-ros:jazzy --build-arg ROS_DISTRO=jazzy --build-arg UID=$(id -u) --build-arg GID=$(id -g) -f docker/Dockerfile.ros docker
 ```
 
 To run it (which builds the ROS stuff; this can take several minutes), do
+
 ```bash
 docker run -it -v $(pwd)/output:/output firehose-ros:humble
 ```
+
 or
+
 ```bash
 docker run -it -v $(pwd)/output:/output firehose-ros:jazzy
 ```

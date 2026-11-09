@@ -629,7 +629,7 @@ def prompt_for_targets(targets: List[FirehoseTarget]) -> List[FirehoseTarget]:
     # Final display of selections
     print_targets_status(targets, selected_targets, skipped_targets)
 
-    return [targets[t] for t in selected_targets]
+    return selected_targets
 
 
 def get_args() -> argparse.Namespace:
@@ -702,15 +702,26 @@ def get_args() -> argparse.Namespace:
         ),
         type=normalized_and_created_path,
     )
-    parser.add_argument(
+
+    output_type_group = parser.add_mutually_exclusive_group()
+
+    output_type_group.add_argument(
         "-a", "--all", action="store_true", help="Generate all output formats"
     )
-    parser.add_argument(
+    output_type_group.add_argument(
+        "--portable",
+        action="store_true",
+        help=(
+            "Generate all output formats that do not require "
+            "non-portable dependencies. This is for usage in a bare-metal workflow."
+        ),
+    )
+    output_type_group.add_argument(
         "--list-targets",
         action="store_true",
         help="Show a list of all available targets to generate",
     )
-    parser.add_argument(
+    output_type_group.add_argument(
         "--targets",
         nargs="*",
         metavar="",
@@ -719,7 +730,7 @@ def get_args() -> argparse.Namespace:
             "--interactive to select one by one"
         ),
     )
-    parser.add_argument(
+    output_type_group.add_argument(
         "--interactive",
         action="store_true",
         help="Interactive mode to select output formats",
@@ -843,6 +854,12 @@ def create_targets(args: argparse.Namespace) -> dict[str, FirehoseTarget]:
     return {target.name: target for target in targets}
 
 
+NON_PORTABLE_TARGETS = ("aspn_dds_cpp",)
+"""
+Generation targets that require non-portable dependencies.
+"""
+
+
 def main() -> None:
     """
     Main entrypoint to run the code generation and build process.
@@ -860,6 +877,12 @@ def main() -> None:
 
     if args.all:
         targets_to_generate = list(all_targets.values())
+    elif args.portable:
+        targets_to_generate = [
+            t
+            for name, t in all_targets.items()
+            if name not in NON_PORTABLE_TARGETS
+        ]
     elif not args.interactive and args.targets:
         # Map the selected target names back to FirehoseTarget instances
         for name in args.targets:
@@ -869,8 +892,8 @@ def main() -> None:
                 sys.exit(1)
             targets_to_generate.append(all_targets[name])
     else:
-        # Default to all targets if none specified
-        targets_to_generate = prompt_for_targets(all_targets)
+        # Default to prompting for targets if none specified
+        targets_to_generate = prompt_for_targets(list(all_targets.values()))
 
     clean_output_directory(args.output_dir)
 
