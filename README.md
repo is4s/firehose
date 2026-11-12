@@ -6,7 +6,7 @@ To build the container, run
 
 ```shell
 docker pull ubuntu:22.04
-docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -f docker/Dockerfile -t firehose - < docker/Dockerfile
+docker build -f docker/Dockerfile -t firehose --build-arg UID=$(id -u) --build-arg GID=$(id -g) docker
 ```
 
 Now you should have an image called `firehose` available for use.
